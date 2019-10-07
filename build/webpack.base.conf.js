@@ -4,36 +4,58 @@
  */
 
 const path = require('path');
-const pkg = require('../package.json');
+const webpack = require('webpack');
+const config = require('../config');
 
 module.exports = {
-    entry: {
-        app: './src/index.js',
-        venders: Object.keys(pkg.dependencies)
+  entry: {
+    app: './src/index.js',
+  },
+
+  output: {
+    path: config.build.assetsRoot,
+    filename: 'js/[name].js',
+    chunkFilename: 'pages/[name].js',
+  },
+
+  resolve: {
+    extensions: ['.js', '.jsx', '.json'],
+    alias: {
+      '@': path.join(__dirname, '../src'),
     },
+  },
 
-    output: {
-        path: path.join(__dirname, '../dist'),
-        filename: 'js/[name].js',
-        chunkFilename: 'pages/[name].js'
-    },
+  module: {
+    loaders: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', 'eslint-loader'],
+      },
+    ],
+  },
 
-    resolve: {
-        extensions: ['.js', '.jsx', '.json'],
-        alias: {
-           '@': path.join(__dirname, '../src')
-        }
-    },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      children: true,
+      async: 'async',
+    }),
 
-    module: {
-        // noParse: /es6-promise\.js$/,
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks(module) {
+        return (
+          module.resource
+          && /\.js$/.test(module.resource)
+          && module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0
+        );
+      },
+      chunks: ['app', 'async-app'],
+    }),
 
-        loaders: [
-            {
-                test: /\.(js|jsx)$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader'
-            }
-        ]
-    }
-}
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest',
+      minChunks: Infinity,
+    }),
+  ],
+};

@@ -2,32 +2,24 @@
  * @file about
  */
 
+import React from 'react';
+import BaseComponent from '@/components/BaseComponent';
 import './about.less';
-import React, {Component} from 'react';
 
-export default class Home extends Component {
+class About extends BaseComponent {
+  state = {
+    title: 'about',
+  }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            title: 'about' 
-        }
-    } 
+  render() {
+    return (
+      <div className="about-page-view">
+        <div className="title">
+          this is about view
+        </div>
+      </div>
+    );
+  }
+}
 
-    componentDidMount() {
-        
-    } 
-
-    login() {
-        this.props.history.push('/login');
-    }
-
-    render() {
-        return (
-            <div className="about-page-view">
-                <div className="title">this is {this.state.title} page</div>
-                <input type="button" value="去登录" onClick={() => this.login()} />
-            </div>
-        )
-    }
-} 
+export default About;

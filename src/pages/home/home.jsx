@@ -2,45 +2,47 @@
  * @file home
  */
 
+
+import React from 'react';
+import ListView from './widgets/ListView';
+import BaseComponent from '@/components/BaseComponent';
 import './home.less';
-import React, { Component } from 'react';
 
-import ListView from './widgets/list-view/list-view';
+class Home extends BaseComponent {
+  setPkgName(e) {
+    const { setPkgName } = this.props;
+    setPkgName(e.target.value);
+  }
 
-// import lazyload from '@/router/lazyload';
+  query() {
+    const { pkgName, queryDownloadsByName } = this.props;
+    queryDownloadsByName(pkgName);
+  }
 
-// lazyload('about');
+  render() {
+    const { pkgName } = this.props;
+    return (
+      <div className="home-page-view">
+        <span>Npm: </span>
+        <input
+          type="text"
+          placeholder="package name"
+          autoFocus
+          onChange={this.setPkgName.bind(this)}
+        />
+        <input
+          type="button"
+          className="btn"
+          onClick={() => this.query()}
+          value="查询"
+        />
+        <p className="title">
+          {pkgName}
+        </p>
+        <ListView />
+      </div>
+    );
+  }
+}
 
-
-export default class Home extends Component {
-
-    constructor(props) {
-        super(props);
-    }
-
-    setPkgName(e) {
-        var value = e.target.value;
-        this.props.setPkgName(value);
-    }
-
-    query() {
-        let pkgName = this.props.pkgName;
-        this.props.queryDownloadsByName(pkgName);
-    }
-
-    render() {
-        return (
-            <div className="home-page-view">
-                <label>Package：</label>
-                <input type="text" 
-                    placeholder="package name" 
-                    autoFocus={true} 
-                    onChange={this.setPkgName.bind(this)} 
-                    /> 
-                <input type="button" className="btn" onClick={() => this.query()} value="查询" />
-                <p className="title">Npm downloads: {this.props.pkgName}</p>
-                <ListView/>
-            </div>
-        )
-    }
-} 
+export default Home.connect();

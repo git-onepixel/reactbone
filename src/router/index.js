@@ -2,19 +2,25 @@
  * @file react router
  */
 
-import React, { Component } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import App from '../components/app/app';
-import Routes from './routes';
+import React from 'react';
+import {
+  BrowserRouter, Switch, Route, Redirect,
+} from 'react-router-dom';
+import App from '@/components/App';
+import NotFound from '@/components/NotFound';
+import lazyload from './lazyload';
 
-export default class extends Component {
-    render() {
-        return (
-            <Router>
-                <App>
-                    <Routes />
-                </App>
-            </Router>
-        )
-    }
+export default function () {
+  return (
+    <BrowserRouter>
+      <App>
+        <Switch>
+          <Redirect exact path="/" to="/home" />
+          <Route exact path="/home" component={lazyload('home')} />
+          <Route exact path="/about" component={lazyload('about')} />
+          <Route component={NotFound} />
+        </Switch>
+      </App>
+    </BrowserRouter>
+  );
 }

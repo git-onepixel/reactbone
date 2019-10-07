@@ -8,53 +8,62 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const baseWebpackConfig = require('./webpack.base.conf');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const pkg = require('../package.json');
+const config = require('../config');
+const helper = require('./helper');
+
+const assetsPath = (filename) => `${config.dev.assetsSubDirectory}/${filename}`;
 
 module.exports = merge(baseWebpackConfig, {
-    
-    module: {
-        loaders: [
-            {
-                test: /\.(css|less)$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        'css-loader',
-                        'postcss-loader',
-                        'less-loader'
-                    ]
-                })
-            }
-        ]
-    },
+  output: {
+    publicPath: config.dev.assetsPublicPath,
+    filename: assetsPath('js/[name].js'),
+    chunkFilename: assetsPath('pages/[name].js'),
+  },
 
-    devServer: {
-        historyApiFallback: true
-    },
+  devtool: config.dev.useSourceMap ? config.dev.devtool : false,
 
-    plugins: [
-
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify('development')
-            }
-        }),
-
-        new ExtractTextPlugin({
-            filename: 'css/[name].css'
-        }),
-
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'venders',
-            filename: 'js/[name].js',
-            minChunks: 2
-        }),
-
-        new HtmlWebpackPlugin({
-            template: path.join(__dirname, '../src/layouts/index.html')
-        })
+  module: {
+    loaders: [
+      helper.createStyleLoader(true),
+      helper.createImageLoader(assetsPath('img/[name].[ext]')),
+      helper.createFontLoader(assetsPath('fonts/[name].[ext]')),
     ],
+  },
 
-    devtool: 'eval-source-map'
-     
+  devServer: {
+    hot: true,
+    host: config.dev.host,
+    port: process.env.PORT || config.dev.port,
+    proxy: config.dev.proxyTable,
+    historyApiFallback: true,
+    quiet: true,
+  },
+
+  plugins: [
+
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: config.dev.env,
+      },
+    }),
+
+    new ExtractTextPlugin({
+      filename: 'css/[name].css',
+    }),
+
+    new webpack.HotModuleReplacementPlugin(),
+
+    new FriendlyErrorsPlugin(),
+
+    new HtmlWebpackPlugin({
+      title: pkg.name,
+      template: path.join(__dirname, '../config/template.html'),
+      filename: 'index.html',
+      inject: true,
+    }),
+  ],
+
 });
