@@ -27,7 +27,7 @@ module.exports = merge(baseWebpackConfig, {
 
   module: {
     loaders: [
-      helper.createStyleLoader(true),
+      helper.createStyleLoader(),
       helper.createImageLoader(assetsPath('img/[name].[ext]')),
       helper.createFontLoader(assetsPath('fonts/[name].[ext]')),
     ],
