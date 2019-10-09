@@ -5,17 +5,11 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const config = require('../config');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
     app: './src/index.js',
-  },
-
-  output: {
-    path: config.build.assetsRoot,
-    filename: 'js/[name].js',
-    chunkFilename: 'pages/[name].js',
   },
 
   resolve: {
@@ -30,7 +24,10 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader'],
+        use: [
+          'babel-loader',
+          'eslint-loader',
+        ],
       },
     ],
   },
@@ -56,6 +53,12 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'manifest',
       minChunks: Infinity,
+    }),
+
+    new CopyWebpackPlugin([{
+      from: 'public',
+    }], {
+      ignore: ['*.html'],
     }),
   ],
 };

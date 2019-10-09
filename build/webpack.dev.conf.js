@@ -3,15 +3,12 @@
  * @author onepixel
  */
 
-const path = require('path');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
-const baseWebpackConfig = require('./webpack.base.conf');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const pkg = require('../package.json');
-const config = require('../config');
+const baseWebpackConfig = require('./webpack.base.conf');
+const config = require('./config');
 const helper = require('./helper');
 
 const assetsPath = (filename) => `${config.dev.assetsSubDirectory}/${filename}`;
@@ -27,7 +24,7 @@ module.exports = merge(baseWebpackConfig, {
 
   module: {
     loaders: [
-      helper.createStyleLoader(),
+      helper.createStyleLoader(false),
       helper.createImageLoader(assetsPath('img/[name].[ext]')),
       helper.createFontLoader(assetsPath('fonts/[name].[ext]')),
     ],
@@ -58,12 +55,6 @@ module.exports = merge(baseWebpackConfig, {
 
     new FriendlyErrorsPlugin(),
 
-    new HtmlWebpackPlugin({
-      title: pkg.name,
-      template: path.join(__dirname, '../config/template.html'),
-      filename: 'index.html',
-      inject: true,
-    }),
+    helper.createHtmlWebpackPlugin(false),
   ],
-
 });
